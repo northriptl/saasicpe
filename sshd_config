@@ -1,0 +1,27 @@
+port 922
+Protocol 2
+UsePrivilegeSeperation yes
+LogLevel INFO
+LoginGraceTime 60
+PermitRootLogin no
+MaxAuthTries 4    #add 
+StrictModes yes
+RSAAuthentication yes
+IgnoreRhosts yes
+RhostsRSAAuthentication no
+HostbasedAuthentication no
+RhostsAuthentication no
+PermitEmptyPasswords no
+ChallengeResponseAuthentication no
+PermitUserEnvironment no  #try yes if no credit
+ClientAliveInterval 300
+ClientAliveCountMax 0
+PrintLastLog no
+AllowTcpForwarding no
+X11Forwarding no
+UseLogin no  #or comment the line out
+PasswordAuthentication no
+AcceptEnv #Comment out any lines with this
+MaxStartups 2
+UsePAM yes
+UseDNS no

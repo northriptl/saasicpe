@@ -1,0 +1,13 @@
+-D
+-b 8192
+-f 1
+--backlog_wait_time 0
+-w /etc/passwd -p wa -k passwd_change
+-w /etc/shadow -p wa -k shadow_change
+-w /etc/group -p wa -k group_change
+ausearch -k searchterm  #checks for the keyword set using -k from above
+nano /etc/audit/auditd.conf   # audit config file
+space_left_action = email 
+action_mail_acct = root 
+admin_space_left_action = halt
+max_log_file_action = keep_logs 
