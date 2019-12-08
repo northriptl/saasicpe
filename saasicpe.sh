@@ -103,6 +103,7 @@ secure_fstab(){
 } #End secure_fstab
 
 audit_logs(){
+	echo "$LogTime uss: [$UserName] Install and configure auditing" >> $LogFile  
 	apt-get install auditd -y
 	auditctl -e 1
 	mv /etc/audit/audit.rules  /etc/audit/audit.rules.old
@@ -168,27 +169,27 @@ gui_plus(){
         option=$(echo $response | grep -c "1.")
             if [ "$option" -eq "1" ]  
                 then
-                    sysctl_fixes >> $LogFile
+                    sysctl_fixes
                 fi
                         
         option=$(echo $response | grep -c "2.")
             if [ "$option" -eq "1" ]  
                 then
-                    remove_guest >> $LogFile
+                    remove_guest
                 fi
             
         
         option=$(echo $response | grep -c "3.")
             if [ "$option" -eq "1" ]  
                 then
-                    firewall >> $LogFile
+                    firewall
                 fi
                     
             
         option=$(echo $response | grep -c "4.")
             if [ "$option" -eq "1" ]  
                 then
-                    packages >> $LogFile
+                    packages
                 fi
             
             
@@ -202,32 +203,32 @@ gui_plus(){
         option=$(echo $response | grep -c "6.")
             if [ "$option" -eq "1" ]  
                 then
-                    audit_logs >> $LogFile
+                    audit_logs
                 fi
             
             
         option=$(echo $response | grep -c "7.")
             if [ "$option" -eq "1" ]  
                 then
-                    ssh_secure >> $LogFile
+                    ssh_secure
                 fi
                 
         option=$(echo $response | grep -c "8.")
 	    	if [ "$option" -eq "1"]
 	    		then
-		    		password_policy >> $LogFile
+		    		password_policy
             	fi
             	
 		option=$(echo $response | grep -c "9.")
             if [ "$option" -eq "1" ]  
                 then
-                    hosts_secure >> $LogFile
+                    hosts_secure
                 fi
                 
         option=$(echo $response | grep -c "10.")
 	    	if [ "$option" -eq "1"]
 	    		then
-		    		something >> $LogFile
+		    		something
             	fi
 
         #End option chain    
@@ -241,106 +242,6 @@ if [[ $EUID -ne 0 ]]; then
    printf "Please run as root:\nsudo bash %s\n" "${0}"
    exit 1
 fi
-
-terminal_only(){
-	greeter
-	
-	#Main functions
-	printf "\nThe program will now do general security fixes\n"
-	printf "Press enter to continue"
-	read continue
-	echo "$LogTime [$UserName] * SAASI $Version - Install Log Started" >> $LogFile
-	sysctl_fixes >> $LogFile
-	firewall >> $LogFile
-	remove_guest >> $LogFile
-	
-	printf "\n"
-	
-	#Ask to do firewall test
-	while true 
-		do
-    		read -p "Do you wish to perform a simple firewall test? y/n: " yn
-    		case $yn in
-        		[Yy]* ) printf "\n"; firewall_test; break;;
-        		[Nn]* ) break;;
-        		* ) echo "Please answer yes or no.";;
-    		esac
-	done
-	
-	printf "\n"
-	#Ask to remove packages
-	while true 
-		do
-    		read -p "Do you wish to remove unneeded/dangerous packages? y/n: " yn
-    		case $yn in
-        		[Yy]* ) packages >> $LogFile; break;;
-        		[Nn]* ) break;;
-        		* ) echo "Please answer yes or no.";;
-    		esac
-	done
-	
-	printf "\n"
-	#Ask to install macchanger
-	while true 
-		do
-    		read -p "Would you like to install macchanger (recommended)? y/n: " yn
-    		case $yn in
-        		[Yy]* ) printf "\n"; mac_fix >> $LogFile; break;;
-        		[Nn]* ) break;;
-        		* ) echo "Please answer yes or no.";;
-    		esac
-	done
-	
-	printf "\n"
-	#Ask to install macchanger
-	while true 
-		do
-    		read -p "Would you like to disable all usb ports (recommended only for VM)? y/n: " yn
-    		case $yn in
-        		[Yy]* ) printf "\n"; usb_disable >> $LogFile; break;;
-        		[Nn]* ) break;;
-        		* ) echo "Please answer yes or no.";;
-    		esac
-	done
-	
-	printf "\n"
-	#Ask to install macchanger
-	while true 
-		do
-    		read -p "Would you like to disable firewire? y/n: " yn
-    		case $yn in
-        		[Yy]* ) printf "\n"; firewire_disable >> $LogFile; break;;
-        		[Nn]* ) break;;
-        		* ) echo "Please answer yes or no.";;
-    		esac
-	done
-	
-	while true 
-		do
-    		read -p "Would you like to install rkhunter? y/n: " yn
-    		case $yn in
-        		[Yy]* ) printf "\n"; install_rkhunter >> $LogFile; break;;
-        		[Nn]* ) break;;
-        		* ) echo "Please answer yes or no.";;
-    		esac
-	done
-	
-	while true 
-		do
-    		read -p "Would you like to secure shared memory (fstab)? y/n: " yn
-    		case $yn in
-        		[Yy]* ) printf "\n"; secure_fstab >> $LogFile; break;;
-        		[Nn]* ) break;;
-        		* ) echo "Please answer yes or no.";;
-    		esac
-	done
-	
-	echo "$LogTime [$UserName] * SAASI $Version - Install Log Ended" >> $LogFile
-	printf "\nScript exiting\nIt is strongly recommended to reboot after running this script\n"
-	
-} #End terminal_only
-
-
 
 while test $# -gt 0; do
         case "$1" in
