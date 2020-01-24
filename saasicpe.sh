@@ -132,11 +132,49 @@ password_policy(){
 
 	echo "difok=5 minlen=14 dcredit=-1 ucredit=-1 lcredit=-1 ocredit=-1 minclass=1 maxrepeat=1 maxclassrepeat=1 gecoscheck=1" >> /etc/security/pwquality.conf
 
+	echo "auth required pam_tally2.so onerr=fail audit silent deny=5 unlock_time=900" >> /etc/pam.d/common-auth
 	mv /etc/pam.d/common-password /etc/pam.d/common-password-old
 	
-	cp ./common-password /etc/pam.d/common-password  
+	cp ./common-password /etc/pam.d/common-password
+
+	echo "PASS_MAX_DAYS    30
+PASS_MIN_DAYS    2
+PASS_WARN_AGE    7
+ENCRYPT_METHOD SHA512" >> /etc/login.defs
 
 } # end password_policy
+
+host_conf(){
+
+	echo "order bind,host
+multi off
+nospoof on" > /etc/host.conf
+
+} #end host_conf
+
+install_packages(){
+
+	apt-get update
+	apt-get install -y selinux grsecurity  apt-listbugs apt-listchanges checkrestart needrestart debsecan debsums fail2ban
+
+} #end user_passwords
+
+
+mysql_security(){
+	echo something
+} #end something
+
+php_security(){
+	echo something
+} #end something
+
+apache2_security(){
+	echo something
+} #end something
+
+nginx_security(){
+	echo something
+} #end something
 
 something(){
 	echo something
@@ -153,8 +191,12 @@ gui_plus(){
     TRUE " 6. Enable auditing" \
     TRUE " 7. Secure SSH" \
     TRUE " 8. Password policy" \
-    TRUE " 9. host.conf" \
-    TRUE "10. Secure Samba" \
+    FALSE " 9. host.conf" \
+    TRUE "10. Install packages" \
+    FALSE "11. mysql security" \
+    FALSE "12. PHP security"\
+    FALSE "13. apache2" \
+    FALSE "14. nginx"\
     --separator=':')
 
     if [ -z "$response" ] ; then
@@ -214,7 +256,7 @@ gui_plus(){
                 fi
                 
         option=$(echo $response | grep -c "8.")
-	    	if [ "$option" -eq "1"]
+	    	if [ "$option" -eq "1" ]
 	    		then
 		    		password_policy
             	fi
@@ -222,14 +264,36 @@ gui_plus(){
 		option=$(echo $response | grep -c "9.")
             if [ "$option" -eq "1" ]  
                 then
-                    hosts_secure
+                    host_conf
                 fi
                 
         option=$(echo $response | grep -c "10.")
-	    	if [ "$option" -eq "1"]
+	    	if [ "$option" -eq "1" ]
 	    		then
-		    		something
+		    		install_packages
             	fi
+            	
+        option=$(echo $response | grep -c "11.")
+	    	if [ "$option" -eq "1" ]
+	    		then
+		    		mysql_security
+            	fi
+		option=$(echo $response | grep -c "12.")
+	    	if [ "$option" -eq "1" ]
+	    		then
+		    		php_security
+            	fi
+		option=$(echo $response | grep -c "13.")
+	    	if [ "$option" -eq "1" ]
+	    		then
+		    		apache2_security
+            	fi
+		option=$(echo $response | grep -c "14.")
+	    	if [ "$option" -eq "1" ]
+	    		then
+		    		nginx_security
+            	fi
+
 
         #End option chain    
         fi
